@@ -9,10 +9,10 @@ import {SERVER_URL} from '../constants.js';
 //   credentials: 'include' 
 
 
-class UpcomingTournaments extends React.Component {
+class Tournaments extends React.Component {
     constructor(props) {
       super(props);
-      console.log("UpcomingTournaments.cnstr "+ JSON.stringify(props.location));
+      console.log("=Tournaments.cnstr "+ JSON.stringify(props.location));
       this.state = {  tournaments :  [] };
     } 
     
@@ -21,21 +21,20 @@ class UpcomingTournaments extends React.Component {
     }
  
     fetchTournaments = () => {
-      console.log("UpcomingTournaments.fetchTournaments");
+      console.log("Tournaments.fetchTournaments");
       const token = Cookies.get('XSRF-TOKEN');
-      fetch(`${SERVER_URL}upcoming-tournaments/`, 
+      fetch(`${SERVER_URL}tournaments`, 
         {  
           method: 'GET', 
-          headers: { 'X-XSRF-TOKEN': token },
-          credentials:'include'
+          headers: { 'X-XSRF-TOKEN': token}
         } )
       .then((response) => response.json()) 
       .then((responseData) => { 
         if (Array.isArray(responseData.tournaments)) {
           // add attribute "id" to each row. Required for DataGrid,  id is index of row (i.e. 0, 1, 2, ...)  
           this.setState({ 
-            tournaments: responseData.tournaments.map((r,index) => {
-                  return {id:index, ...r};
+            tournaments: responseData.tournaments.map((tournament,index) => {
+                  return {id:index, ...tournament};
             })
           });
         } else {
@@ -55,12 +54,12 @@ class UpcomingTournaments extends React.Component {
  
     render() {
        const columns = [
-        { field: 'name', headerName: 'Name', width: 250 },
-        { field: 'startDate', headerName: 'Start Date', width: 250},
-        { field: 'startTime', headerName: 'Start Time (PST)', width: 150 , editable:true}
+          { field: 'tournamentName', headerName: 'Name', width: 400 },
+          { field: 'startDate', headerName: 'Start Date', width: 250 },
+          { field: 'endDate', headerName: 'End Date', width: 250 },
         ];
         
-        const tournaments = this.props.location.tournaments;
+
       
         return(
             <div className="App">
@@ -78,4 +77,4 @@ class UpcomingTournaments extends React.Component {
         };
 }
 
-export default UpcomingTournaments;
+export default Tournaments;

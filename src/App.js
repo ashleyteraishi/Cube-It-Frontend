@@ -3,7 +3,6 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
-import Intro from './components/Intro';
 import TournamentList from './components/TournamentList';
 
 function App() {
@@ -18,8 +17,7 @@ function App() {
       </AppBar>
       <BrowserRouter>
         <Routes>
-          <Route exact path='/' component={Intro} />
-          <Route exact path='/upcoming-tournaments' component={TournamentList}/>
+          <Route exact path='/tournaments' element={<TournamentList/>}/>
         </Routes>
       </BrowserRouter>
     </div>
