@@ -2,8 +2,9 @@ import './App.css';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import {BrowserRouter, Routes, Route} from 'react-router-dom';
-import TournamentList from './components/TournamentList';
+import {BrowserRouter, Switch, Route} from 'react-router-dom';
+import Tournaments from './components/Tournaments';
+import Subtournaments from './components/Subtournaments';
 
 function App() {
   return (
@@ -16,9 +17,10 @@ function App() {
         </Toolbar>
       </AppBar>
       <BrowserRouter>
-        <Routes>
-          <Route exact path='/tournaments' element={<TournamentList/>}/>
-        </Routes>
+        <Switch>
+          <Route exact path='/tournaments' component={Tournaments}/>
+          <Route exact path='/tournaments/:tournamentId/subtournaments' component={Subtournaments}/>
+        </Switch>
       </BrowserRouter>
     </div>
   );
