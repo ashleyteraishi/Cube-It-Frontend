@@ -20,7 +20,7 @@ function App() {
       <BrowserRouter>
         <Switch>
           <Route exact path='/tournaments' component={Tournaments}/>
-          <Route exact path='/tournaments/:tournamentId/subtournaments' component={Subtournaments}/>
+          <Route exact path='/tournaments/subtournaments' component={Subtournaments}/>
           <Route exact path='/subtournaments/:subtournamentId/brackets' component={Brackets}/>
         </Switch>
       </BrowserRouter>

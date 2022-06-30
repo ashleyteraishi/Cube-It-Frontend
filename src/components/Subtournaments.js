@@ -19,18 +19,20 @@ class Subtournaments extends React.Component {
     }
 
     componentDidMount() {
-      const tournamentId = this.props.match.params.tournamentId;
-      this.fetchSubtournaments(tournamentId);
+      this.fetchSubtournaments();
     }
  
-    fetchSubtournaments = (tournamentId) => {
+    fetchSubtournaments = () => {
       console.log("Events.fetchSubtournaments");
       const token = Cookies.get('XSRF-TOKEN');
-      fetch(`${SERVER_URL}tournaments/${tournamentId}/subtournaments`, 
+      fetch(`${SERVER_URL}tournaments/subtournaments`, 
         {  
           method: 'GET', 
-          headers: { 'X-XSRF-TOKEN': token}
-        } )
+          headers: { 'X-XSRF-TOKEN': token},
+          body: JSON.stringify({
+            tournamentId: this.props.location.tournament.tournamentId
+          }),
+        })
       .then((response) => response.json()) 
       .then((responseData) => { 
         if (Array.isArray(responseData.subtournaments)) {

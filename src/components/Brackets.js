@@ -46,12 +46,7 @@ class Brackets extends React.Component {
           });
         }        
       })
-      .catch(err => {
-        toast.error("Fetch failed.", {
-            position: toast.POSITION.BOTTOM_LEFT
-          });
-          console.error(err); 
-      })
+      .catch(err => console.error(err));
     }
   
  

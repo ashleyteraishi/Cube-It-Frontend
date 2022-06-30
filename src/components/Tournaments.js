@@ -4,6 +4,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import {DataGrid} from '@mui/x-data-grid';
 import Cookies from 'js-cookie';
 import {SERVER_URL} from '../constants.js';
+import { Radio } from '@mui/material';
+import Button from '@mui/material/Button';
+import { Link } from 'react-router-dom'
 
 // NOTE:  for OAuth security, http request must have
 //   credentials: 'include' 
@@ -13,7 +16,7 @@ class Tournaments extends React.Component {
     constructor(props) {
       super(props);
       console.log("=Tournaments.cnstr "+ JSON.stringify(props.location));
-      this.state = {  tournaments :  [] };
+      this.state = { selected: 0, tournaments :  [], selectedId: 0};
     } 
     
      componentDidMount() {
@@ -43,24 +46,40 @@ class Tournaments extends React.Component {
           });
         }        
       })
-      .catch(err => {
-        toast.error("Fetch failed.", {
-            position: toast.POSITION.BOTTOM_LEFT
-          });
-          console.error(err); 
-      })
+      .catch(err => console.error(err));
     }
-  
+    
+    onRadioClick = (event) => {
+      console.log("Tournament.onRadioClick " + event.target.value);
+      this.setState({ selected: event.target.value });
+    }
  
     render() {
        const columns = [
-          { field: 'tournamentName', headerName: 'Name', width: 400 },
+          { 
+            field: 'tournamentName', 
+            headerName: 'Name', 
+            width: 400,
+            renderCell: (params) => (
+              <div>
+                <Radio
+                  checked={params.row.id == this.state.selected}
+                  onChange={this.onRadioClick}
+                  value={params.row.id}
+                  color="default"
+                  size="small"
+                />
+                {params.value}
+              </div>
+            )
+          },
           { field: 'startDate', headerName: 'Start Date', width: 250 },
           { field: 'endDate', headerName: 'End Date', width: 250 },
         ];
         
+        const tournamentSelected = this.state.tournaments[this.state.selected];
+        console.log("Tournament selected: " + tournamentSelected);
 
-      
         return(
             <div className="App">
               
@@ -71,6 +90,10 @@ class Tournaments extends React.Component {
               <div style={{ height: 400, width: '100%' }}>
                 <DataGrid rows={this.state.tournaments} columns={columns} />
               </div>
+              <Button id="Subtournaments" component={Link} to={{ pathname: '/tournaments/subtournaments', tournament: tournamentSelected }}
+                variant="outlined" color="primary" disabled={this.state.tournaments.length === 0} style={{ margin: 10 }}>
+                View Subtournaments
+              </Button>
               <ToastContainer autoClose={1500} />   
             </div>
             ); 
