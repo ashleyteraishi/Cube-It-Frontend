@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import {BrowserRouter, Switch, Route} from 'react-router-dom';
 import Tournaments from './components/Tournaments';
 import Subtournaments from './components/Subtournaments';
+import Brackets from './components/Brackets';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Switch>
           <Route exact path='/tournaments' component={Tournaments}/>
           <Route exact path='/tournaments/:tournamentId/subtournaments' component={Subtournaments}/>
+          <Route exact path='/subtournaments/:subtournamentId/brackets' component={Brackets}/>
         </Switch>
       </BrowserRouter>
     </div>
