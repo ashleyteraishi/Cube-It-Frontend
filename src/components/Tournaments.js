@@ -16,7 +16,7 @@ class Tournaments extends React.Component {
     constructor(props) {
       super(props);
       console.log("=Tournaments.cnstr "+ JSON.stringify(props.location));
-      this.state = { selected: 0, tournaments :  [], selectedId: 0};
+      this.state = { selected: 0, tournaments :  [], tournamentSelected: {}};
     } 
     
      componentDidMount() {
@@ -40,6 +40,15 @@ class Tournaments extends React.Component {
                   return {id:index, ...tournament};
             })
           });
+          console.log(this.state.tournaments)
+          
+          function setStateTournament(state, props) {
+            const newState = {...state, tournamentSelected: state.tournaments[0]};
+            return newState;
+          }
+          this.setState(setStateTournament);
+          console.log(this.state.tournamentSelected);
+
         } else {
           toast.error("Fetch failed.", {
             position: toast.POSITION.BOTTOM_LEFT
@@ -52,6 +61,12 @@ class Tournaments extends React.Component {
     onRadioClick = (event) => {
       console.log("Tournament.onRadioClick " + event.target.value);
       this.setState({ selected: event.target.value });
+      function setStateTournament(state, props) {
+        const newState = {...state, tournamentSelected: state.tournaments[0]};
+        return newState;
+      }
+      this.setState(setStateTournament);
+      console.log(this.state.tournamentSelected);
     }
  
     render() {
@@ -76,9 +91,6 @@ class Tournaments extends React.Component {
           { field: 'startDate', headerName: 'Start Date', width: 250 },
           { field: 'endDate', headerName: 'End Date', width: 250 },
         ];
-        
-        const tournamentSelected = this.state.tournaments[this.state.selected];
-        console.log("Tournament selected: " + tournamentSelected);
 
         return(
             <div className="App">
@@ -90,10 +102,11 @@ class Tournaments extends React.Component {
               <div style={{ height: 400, width: '100%' }}>
                 <DataGrid rows={this.state.tournaments} columns={columns} />
               </div>
-              <Button id="Subtournaments" component={Link} to={{ pathname: '/tournaments/subtournaments', tournament: tournamentSelected }}
+              <Button id="Subtournaments" component={Link} to={{ pathname: `/tournaments/${this.state.tournamentSelected.tournamentId}/subtournaments`}}
                 variant="outlined" color="primary" disabled={this.state.tournaments.length === 0} style={{ margin: 10 }}>
                 View Subtournaments
               </Button>
+              
               <ToastContainer autoClose={1500} />   
             </div>
             ); 

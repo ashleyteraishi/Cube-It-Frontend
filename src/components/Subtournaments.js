@@ -15,7 +15,7 @@ class Subtournaments extends React.Component {
       super(props);
       console.log(props);
       console.log("=Subtournaments.cnstr "+ JSON.stringify(props.location));
-      this.state = {subtournaments :  [] };
+      this.state = {subtournaments :  []};
     }
 
     componentDidMount() {
@@ -25,13 +25,10 @@ class Subtournaments extends React.Component {
     fetchSubtournaments = () => {
       console.log("Events.fetchSubtournaments");
       const token = Cookies.get('XSRF-TOKEN');
-      fetch(`${SERVER_URL}tournaments/subtournaments`, 
+      fetch(`${SERVER_URL}tournaments/${this.props.match.params.tournamentId}/subtournaments`, 
         {  
           method: 'GET', 
           headers: { 'X-XSRF-TOKEN': token},
-          body: JSON.stringify({
-            tournamentId: this.props.location.tournament.tournamentId
-          }),
         })
       .then((response) => response.json()) 
       .then((responseData) => { 
