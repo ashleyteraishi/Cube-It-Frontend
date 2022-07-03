@@ -6,7 +6,7 @@ import Cookies from 'js-cookie';
 import {SERVER_URL} from '../constants.js';
 import { Radio } from '@mui/material';
 import Button from '@mui/material/Button';
-import { Link } from 'react-router-dom'
+import { Link, withRouter } from 'react-router-dom'
 
 // NOTE:  for OAuth security, http request must have
 //   credentials: 'include' 
@@ -62,7 +62,7 @@ class Tournaments extends React.Component {
       console.log("Tournament.onRadioClick " + event.target.value);
       this.setState({ selected: event.target.value });
       function setStateTournament(state, props) {
-        const newState = {...state, tournamentSelected: state.tournaments[0]};
+        const newState = {...state, tournamentSelected: state.tournaments[event.target.value]};
         return newState;
       }
       this.setState(setStateTournament);

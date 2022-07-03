@@ -2,7 +2,7 @@ import './App.css';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import {BrowserRouter, Switch, Route} from 'react-router-dom';
+import {BrowserRouter, Switch, Route, withRouter} from 'react-router-dom';
 import Tournaments from './components/Tournaments';
 import Subtournaments from './components/Subtournaments';
 import Brackets from './components/Brackets';
@@ -19,9 +19,10 @@ function App() {
       </AppBar>
       <BrowserRouter>
         <Switch>
-          <Route exact path='/tournaments' component={Tournaments}/>
-          <Route path='/tournaments/:tournamentId/subtournaments' component={Subtournaments}/>
-          <Route exact path='/subtournaments/:subtournamentId/brackets' component={Brackets}/>
+          <Route path='/tournaments/:tournamentId/subtournaments' component={withRouter(Subtournaments)}/>
+          <Route path='/subtournaments/:subtournamentId/brackets' component={Brackets}/>
+          <Route path='/tournaments' component={withRouter(Tournaments)}/>
+          <Route exact path='/' component={withRouter(Tournaments)}/>
         </Switch>
       </BrowserRouter>
     </div>
