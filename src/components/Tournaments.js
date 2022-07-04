@@ -29,7 +29,8 @@ class Tournaments extends React.Component {
       fetch(`${SERVER_URL}tournaments`, 
         {  
           method: 'GET', 
-          headers: { 'X-XSRF-TOKEN': token}
+          headers: { 'X-XSRF-TOKEN': token}, 
+          mode: 'cors'
         } )
       .then((response) => response.json()) 
       .then((responseData) => { 
@@ -53,7 +54,7 @@ class Tournaments extends React.Component {
           toast.error("Fetch failed.", {
             position: toast.POSITION.BOTTOM_LEFT
           });
-        }        
+        }       
       })
       .catch(err => console.error(err));
     }

@@ -6,6 +6,7 @@ import {BrowserRouter, Switch, Route, withRouter} from 'react-router-dom';
 import Tournaments from './components/Tournaments';
 import Subtournaments from './components/Subtournaments';
 import Brackets from './components/Brackets';
+import Login from './components/Login';
 
 function App() {
   return (
@@ -22,7 +23,7 @@ function App() {
           <Route path='/tournaments/:tournamentId/subtournaments' component={withRouter(Subtournaments)}/>
           <Route path='/subtournaments/:subtournamentId/brackets' component={Brackets}/>
           <Route path='/tournaments' component={withRouter(Tournaments)}/>
-          <Route exact path='/' component={withRouter(Tournaments)}/>
+          <Route exact path='/' component={Login}/>
         </Switch>
       </BrowserRouter>
     </div>

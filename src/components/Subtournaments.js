@@ -31,6 +31,7 @@ class Subtournaments extends React.Component {
         {  
           method: 'GET', 
           headers: { 'X-XSRF-TOKEN': token},
+          crendentials: 'include'
         })
       .then((response) => response.json()) 
       .then((responseData) => { 
@@ -110,6 +111,10 @@ class Subtournaments extends React.Component {
               <Button id="Brackets" component={Link} to={{ pathname: `/subtournaments/${this.state.subtournamentSelected.subtournamentId}/brackets`}}
                 variant="outlined" color="primary" disabled={this.state.subtournaments.length === 0} style={{ margin: 10 }}>
                 View Brackets
+              </Button>
+              <Button id="SubtournamentSignup"
+                variant="outlined" color="primary" >
+                Sign Up
               </Button>
               <ToastContainer autoClose={1500} />   
             </div>

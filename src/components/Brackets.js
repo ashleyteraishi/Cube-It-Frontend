@@ -29,7 +29,8 @@ class Brackets extends React.Component {
       fetch(`${SERVER_URL}subtournaments/${subtournamentId}/brackets`, 
         {  
           method: 'GET', 
-          headers: { 'X-XSRF-TOKEN': token}
+          headers: { 'X-XSRF-TOKEN': token},
+          credentials: 'include'
         } )
       .then((response) => response.json()) 
       .then((responseData) => { 
@@ -53,7 +54,8 @@ class Brackets extends React.Component {
     render() {
        const columns = [
           { field: 'bracket_pos', headerName: 'Bracket Position', width: 400 },
-          { field: 'competitionstarttime', headerName: 'Start Time', width: 400 },
+          { field: 'competitoronetimeid', headerName: 'Competitor One', width: 400 },
+          { field: 'competitortwotimeid', headerName: 'Competitor Two', width: 400 },
           { field: 'subtournamentid', headerName: 'Subtournament Id', width: 400 },
         ];
         
