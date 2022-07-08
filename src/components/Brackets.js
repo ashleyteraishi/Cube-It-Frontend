@@ -59,8 +59,6 @@ class Brackets extends React.Component {
           { field: 'subtournamentid', headerName: 'Subtournament Id', width: 400 },
         ];
         
-
-      
         return(
             <div className="App">
               

@@ -11,13 +11,6 @@ import Login from './components/Login';
 function App() {
   return (
     <div className="App">
-      <AppBar position="static" color="default">
-        <Toolbar>
-           <Typography variant="h6" color="inherit">
-            CubeIt
-           </Typography>
-        </Toolbar>
-      </AppBar>
       <BrowserRouter>
         <Switch>
           <Route path='/tournaments/:tournamentId/subtournaments' component={withRouter(Subtournaments)}/>
