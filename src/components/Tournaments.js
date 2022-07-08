@@ -7,6 +7,7 @@ import { SERVER_URL } from '../constants.js';
 import { Radio } from '@mui/material';
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom'
+import ReactLoading from 'react-loading';
 
 // NOTE:  for OAuth security, http request must have
 //   credentials: 'include' 
@@ -135,14 +136,15 @@ class Tournaments extends React.Component {
         </div>
       );
     }
-    
+
     // else, waiting for the fetch - loading
     else {
       return (
         <div className="App">
 
           <div style={{ height: 400, width: '100%' }}>
-            
+            <ReactLoading type="bubbles" color="#6c757d"
+              height={100} width={50} />
           </div>
 
           <ToastContainer autoClose={1500} />

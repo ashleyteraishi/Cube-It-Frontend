@@ -7,6 +7,7 @@ import Button from '@mui/material/Button';
 import Radio from '@mui/material/Radio';
 import Cookies from 'js-cookie';
 import { SERVER_URL } from '../constants.js';
+import ReactLoading from 'react-loading';
 
 // NOTE:  for OAuth security, http request must have
 //   credentials: 'include' 
@@ -71,6 +72,40 @@ class Subtournaments extends React.Component {
       })
   }
 
+  // add to bracket
+  addBracket = (subtournament) => {
+    const token = Cookies.get('XSRF-TOKEN');
+
+    fetch(`${SERVER_URL}subtournaments/${this.state.subtournamentSelected.subtournamentId}/register`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-XSRF-TOKEN': token
+        },
+        credentials:'include'
+      })
+      .then(res => {
+        if (res.ok) {
+          toast.success("Successfully entered subtournament", {
+            position: toast.POSITION.BOTTOM_LEFT
+          });
+          this.fetchSubtournaments();
+        } else {
+          toast.error("Error when signing up", {
+            position: toast.POSITION.BOTTOM_LEFT
+          });
+          console.error('Post http status =' + res.status);
+        }
+      })
+      .catch(err => {
+        toast.error("Error when signing up", {
+          position: toast.POSITION.BOTTOM_LEFT
+        });
+        console.error(err);
+      })
+  }
+
   onRadioClick = (event) => {
     console.log("Subtournament.onRadioClick " + event.target.value);
     this.setState({ selected: event.target.value });
@@ -119,7 +154,7 @@ class Subtournaments extends React.Component {
             variant="outlined" color="primary" disabled={this.state.subtournaments.length === 0} style={{ margin: 10 }}>
             View Brackets
           </Button>
-          <Button id="SubtournamentSignup"
+          <Button id="AddBracket" onClick={this.addBracket}
             variant="outlined" color="primary" >
             Sign Up
           </Button>
@@ -145,7 +180,8 @@ class Subtournaments extends React.Component {
       return (
         <div className="App">
           <div style={{ height: 400, width: '100%' }}>
-            
+            <ReactLoading type="bubbles" color="#6c757d"
+              height={100} width={50} />
           </div>
           <ToastContainer autoClose={1500} />
         </div>
