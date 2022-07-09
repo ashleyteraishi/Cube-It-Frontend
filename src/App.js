@@ -7,6 +7,7 @@ import Tournaments from './components/Tournaments';
 import Subtournaments from './components/Subtournaments';
 import Brackets from './components/Brackets';
 import Login from './components/Login';
+import Competition from './components/Competition';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path='/tournaments/:tournamentId/subtournaments' component={withRouter(Subtournaments)}/>
           <Route path='/subtournaments/:subtournamentId/brackets' component={Brackets}/>
           <Route path='/tournaments' component={withRouter(Tournaments)}/>
+          <Route path='/competition' component={Competition}/>
           <Route exact path='/' component={Login}/>
         </Switch>
       </BrowserRouter>
