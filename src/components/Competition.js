@@ -15,10 +15,15 @@ class Competition extends React.Component {
         super(props);
     }
 
+    handleKeyDown = event => {
+        if(event.key === " ") {
+            console.log("Spacebar")
+        }
+    }
+
     render() {
         return(
-            <div>
-                <StopWatch />
+            <div tabIndex={0} onKeyDown={this.handleKeyDown}>
                 <h1>EXAMPLE TOURNAMENT</h1>
                 <div>
                     <h1>VIDEO HERE</h1>
@@ -28,8 +33,13 @@ class Competition extends React.Component {
                 </div>
                 <div>
                     <h1>MY INFO</h1>
+                </div>
+                <div>
                     <h3>TIMER</h3>
-                    <Button>FAT ASS</Button>
+                    <StopWatch />
+                </div>
+                <div>
+                    <h1>Blank Space</h1>
                 </div>
             </div>
         );
