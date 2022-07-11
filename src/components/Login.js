@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {SERVER_URL} from '../constants.js'
+import {SERVER_URL, FRONTEND_URL} from '../constants.js'
 import { Link } from 'react-router-dom'
 import Button from '@mui/material/Button';
 import Cookies from 'js-cookie';
@@ -30,7 +30,7 @@ class Login extends Component {
   render() {
         return ( 
           <div>
-            <a align="left" href={SERVER_URL + 'oauth2/authorization/google'}>Login using Google</a> 
+            <a align="left" href={{FRONTEND_URL} + 'oauth2/authorization/google'}>Login using Google</a> 
           </div>
           
         ); 
