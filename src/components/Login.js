@@ -29,8 +29,10 @@ class Login extends Component {
   
   render() {
         return ( 
+          <div>
             <a align="left" href={SERVER_URL + 'oauth2/authorization/google'}>Login using Google</a> 
-            
+          </div>
+          
         ); 
   }
 }
