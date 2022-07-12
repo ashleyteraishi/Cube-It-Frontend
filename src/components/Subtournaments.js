@@ -31,8 +31,10 @@ class Subtournaments extends React.Component {
     fetch(`${SERVER_URL}tournaments/${this.props.match.params.tournamentId}/subtournaments`,
       {
         method: 'GET',
-        headers: { 'X-XSRF-TOKEN': token },
-        crendentials: 'include'
+        headers: { 
+          'X-XSRF-TOKEN': token,
+          'Access-Control-Allow-Origin': '*'
+        }
       })
       .then((response) => response.json())
       .then((responseData) => {
