@@ -30,8 +30,7 @@ class Tournaments extends React.Component {
     fetch(`${SERVER_URL}tournaments`,
       {
         method: 'GET',
-        headers: { 'X-XSRF-TOKEN': token },
-        mode: 'no-cors'
+        headers: { 'X-XSRF-TOKEN': token }
       })
       .then((response) => response.json())
       .then((responseData) => {
@@ -142,9 +141,9 @@ class Tournaments extends React.Component {
       return (
         <div className="App">
 
-          <div style={{display: 'flex',  justifyContent:'center', alignItems:'center', height: '100vh'}}>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
             <ReactLoading type="bubbles" color="#6c757d"
-              height={100} width={50}/>
+              height={100} width={50} />
           </div>
 
           <ToastContainer autoClose={1500} />

@@ -78,12 +78,11 @@ class Subtournaments extends React.Component {
 
     fetch(`${SERVER_URL}subtournaments/${this.state.subtournamentSelected.subtournamentId}/register`,
       {
-        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'X-XSRF-TOKEN': token
         },
-        mode: 'no-cors'
+        credentials: 'include'
       })
       .then(res => {
         if (res.ok) {

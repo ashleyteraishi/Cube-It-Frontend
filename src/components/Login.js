@@ -41,7 +41,7 @@ function Login() {
       <h1>Welcome to Cube-It</h1>
       <h2>An online speed-cubing platform</h2>
       
-      <h3 style={{marginTop:'20px', marginBottom:'40px'}}><Link to="/tournaments" class="link">Upcoming Tournaments</Link></h3>
+      <h3 style={{marginTop:'20px', marginBottom:'40px'}}><Link to="/tournaments" className="link">Upcoming Tournaments</Link></h3>
 
       <div id="signInDiv"></div>
     
