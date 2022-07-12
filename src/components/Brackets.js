@@ -30,7 +30,8 @@ class Brackets extends React.Component {
       fetch(`${SERVER_URL}subtournaments/${subtournamentId}/brackets`, 
         {  
           method: 'GET', 
-          headers: { 'X-XSRF-TOKEN': token}
+          headers: { 'X-XSRF-TOKEN': token},
+          mode: 'no-cors'
         } )
       .then((response) => response.json()) 
       .then((responseData) => { 
