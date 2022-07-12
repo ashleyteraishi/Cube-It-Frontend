@@ -142,9 +142,9 @@ class Tournaments extends React.Component {
       return (
         <div className="App">
 
-          <div style={{ height: 400, width: '100%' }}>
+          <div style={{display: 'flex',  justifyContent:'center', alignItems:'center', height: '100vh'}}>
             <ReactLoading type="bubbles" color="#6c757d"
-              height={100} width={50} />
+              height={100} width={50}/>
           </div>
 
           <ToastContainer autoClose={1500} />

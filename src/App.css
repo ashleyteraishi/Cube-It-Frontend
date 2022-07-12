@@ -36,3 +36,28 @@
     transform: rotate(360deg);
   }
 }
+
+#signInDiv {
+  display: flex;
+  justify-content: center;
+}
+
+#signOutButton {
+  background-color: white;
+  color: black;
+  border: 1px solid gray;
+  padding: 10px 20px;
+  border-radius: 5px;
+}
+
+.link {
+  color: #282c34;
+  text-decoration: none;
+}
+.link:hover {
+  color:#1266F1;
+}
+
+.spacer {
+  margin: 20px;
+}
