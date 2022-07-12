@@ -30,8 +30,7 @@ class Tournaments extends React.Component {
     fetch(`${SERVER_URL}tournaments`,
       {
         method: 'GET',
-        headers: { 'X-XSRF-TOKEN': token },
-        mode: 'cors'
+        headers: { 'X-XSRF-TOKEN': token }
       })
       .then((response) => response.json())
       .then((responseData) => {
