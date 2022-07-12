@@ -31,6 +31,7 @@ class Tournaments extends React.Component {
       {
         method: 'GET',
         headers: { 
+          'Content-Type': 'application/json',
           'X-XSRF-TOKEN': token,
           'Access-Control-Allow-Origin': '*'
         }
