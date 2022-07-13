@@ -4,7 +4,8 @@ import Tournaments from './components/Tournaments';
 import Subtournaments from './components/Subtournaments';
 import Brackets from './components/Brackets';
 import Home from './components/Home';
-import NavBar from './components/NavBar'
+import NavBar from './components/NavBar';
+import Account from './components/Account';
 
 function App() {
   
@@ -16,6 +17,7 @@ function App() {
           <Route path='/tournaments/:tournamentId/subtournaments' component={withRouter(Subtournaments)} />
           <Route path='/subtournaments/:subtournamentId/brackets' component={Brackets} />
           <Route path='/tournaments' component={withRouter(Tournaments)} />
+          <Route path='/account' component={Account} />
           <Route exact path='/' component={Home} />
         </Switch>
       </BrowserRouter>

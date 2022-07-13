@@ -47,7 +47,7 @@ const NavBar = () => {
                 </li>
                 {Object.keys(user).length !== 0 &&
                     <li>
-                        <Link to="/" className='link'>Account</Link>
+                        <Link to="/account" className='link'>Account</Link>
                     </li>
                 }
                 <li id='login'>
