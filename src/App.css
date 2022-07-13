@@ -61,3 +61,45 @@
 .spacer {
   margin: 20px;
 }
+
+#NavBar {
+  height: 10%;
+}
+
+#NavBar ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+#NavBar ul li {
+  display: inline;
+  float: left;
+  padding-top: 20px;
+  padding-left: 2%;
+}
+
+#NavBar ul #logo {
+  padding-right: 5%;
+}
+
+#NavBar ul #logo .link {
+  font-weight: bold;
+}
+
+#NavBar ul #login {
+  float: right;
+  padding-right: 2%;
+}
+
+#NavBar ul #logout {
+  float: right;
+  padding-right: 2%;
+}
+
+#NavBar ul li .link {
+  text-decoration: none;
+}

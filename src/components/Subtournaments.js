@@ -85,7 +85,7 @@ class Subtournaments extends React.Component {
           'Content-Type': 'application/json',
           'X-XSRF-TOKEN': token
         },
-        credentials: 'include'
+        credentials: 'include',
       })
       .then(res => {
         if (res.ok) {
