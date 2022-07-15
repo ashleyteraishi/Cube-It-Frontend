@@ -20,7 +20,6 @@ const NavBar = () => {
                         <Link to="/tournaments" className='link'>Tournaments</Link>
                     </li>
                     <Login/>
-
                 </ul>
 
             </div>

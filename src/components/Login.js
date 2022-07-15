@@ -3,6 +3,10 @@ import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import jwt_decode from 'jwt-decode';
 import Account from './Account';
+import { SERVER_URL } from '../constants.js'
+import Cookies from 'js-cookie';
+import { ToastContainer, toast } from 'react-toastify';
+
 
 const Login = () => {
     // may need to use something besides state for use with spring
@@ -20,6 +24,8 @@ const Login = () => {
         setUser({});
         document.getElementById("signInDiv").style.display = "flex";
     }
+
+
 
     useEffect(() => {
         /* global google */
@@ -49,9 +55,6 @@ const Login = () => {
                     <button id="signOutButton" onClick={(e) => handleSignout(e)}>Sign Out</button>
                 </li>
             }
-
-
-
         </div>
 
     )
