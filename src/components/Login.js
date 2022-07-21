@@ -17,15 +17,51 @@ const Login = () => {
         var userObject = jwt_decode(response.credential);
         console.log(userObject);
         setUser(userObject);
+        addUser(userObject);
         document.getElementById("signInDiv").style.display = "none";
     }
 
     function handleSignout(event) {
         setUser({});
+        deleteUserLogin();
         document.getElementById("signInDiv").style.display = "flex";
     }
 
+    const addUser = (user) => {
+        console.log("request options");
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type':'application/json'
+            },
+            body: JSON.stringify({email: user.email, name: user.name})
+        };
 
+        console.log("request body: ",requestOptions.body);
+    
+        console.log("post");
+        fetch(`${SERVER_URL}user`, requestOptions)
+            .then(response => response.json())
+            .then((data) => {
+                console.log(data);
+            })
+            .catch((err) => console.error(err));
+    }
+
+    const deleteUserLogin = () => {
+        console.log("request options");
+        const requestOptions = {
+            method: 'DELETE',
+            headers: {'Content-Type': 'application/json'},
+        };
+    
+        console.log("delete");
+        fetch(`${SERVER_URL}user`, requestOptions)
+            .then(() => {
+                console.log("successful logout");
+            })
+            .catch((err) => console.error(err));
+    }
 
     useEffect(() => {
         /* global google */
