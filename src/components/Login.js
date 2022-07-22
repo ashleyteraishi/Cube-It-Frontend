@@ -14,6 +14,7 @@ const Login = () => {
 
     function handleCallbackResponse(response) {
         console.log("Encoded JWT ID token: " + response.credential);
+        localStorage.setItem('jwt', response.credential);
         var userObject = jwt_decode(response.credential);
         console.log(userObject);
         setUser(userObject);
@@ -23,16 +24,18 @@ const Login = () => {
 
     function handleSignout(event) {
         setUser({});
-        deleteUserLogin();
+        localStorage.removeItem('jwt');
         document.getElementById("signInDiv").style.display = "flex";
     }
 
     const addUser = (user) => {
         console.log("request options");
+        const token = Cookies.get('XSRF-TOKEN');
         const requestOptions = {
             method: 'POST',
             headers: {
-                'Content-Type':'application/json'
+                'Content-Type':'application/json',
+                'X-XSRF-TOKEN': token
             },
             body: JSON.stringify({email: user.email, name: user.name})
         };
@@ -44,21 +47,6 @@ const Login = () => {
             .then(response => response.json())
             .then((data) => {
                 console.log(data);
-            })
-            .catch((err) => console.error(err));
-    }
-
-    const deleteUserLogin = () => {
-        console.log("request options");
-        const requestOptions = {
-            method: 'DELETE',
-            headers: {'Content-Type': 'application/json'},
-        };
-    
-        console.log("delete");
-        fetch(`${SERVER_URL}user`, requestOptions)
-            .then(() => {
-                console.log("successful logout");
             })
             .catch((err) => console.error(err));
     }
