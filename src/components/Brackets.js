@@ -5,6 +5,7 @@ import {DataGrid} from '@mui/x-data-grid';
 import Cookies from 'js-cookie';
 import {SERVER_URL} from '../constants.js';
 import {withRouter} from 'react-router';
+import ReactLoading from 'react-loading';
 
 // NOTE:  for OAuth security, http request must have
 //   credentials: 'include' 
@@ -15,7 +16,7 @@ class Brackets extends React.Component {
       super(props);
       console.log(props);
       console.log("=Brackets.cnstr "+ JSON.stringify(props.location));
-      this.state = {brackets :  [] };
+      this.state = {brackets :  [], isLoading: true};
     }
 
     componentDidMount() {
@@ -29,9 +30,12 @@ class Brackets extends React.Component {
       fetch(`${SERVER_URL}subtournaments/${subtournamentId}/brackets`, 
         {  
           method: 'GET', 
-          headers: { 'X-XSRF-TOKEN': token},
-          credentials: 'include'
-        } )
+          headers: { 
+            'Content-Type': 'application/json',
+            'X-XSRF-TOKEN': token,
+            'Access-Control-Allow-Origin': '*'
+          }
+        })
       .then((response) => response.json()) 
       .then((responseData) => { 
         if (Array.isArray(responseData.brackets)) {
@@ -41,6 +45,12 @@ class Brackets extends React.Component {
                   return {id:index, ...bracket};
             })
           });
+          function setLoading(state, props) {
+            const newState = { ...state, isLoading: false };
+            return newState;
+          }
+          this.setState(setLoading);
+          console.log(this.state.isLoading);
         } else {
           toast.error("Fetch failed.", {
             position: toast.POSITION.BOTTOM_LEFT
@@ -59,9 +69,8 @@ class Brackets extends React.Component {
           { field: 'subtournamentid', headerName: 'Subtournament Id', width: 400 },
         ];
         
-
-      
-        return(
+        if (!this.state.isLoading) {
+          return(
             <div className="App">
               
               <div style={{width:'100%'}}>
@@ -74,6 +83,19 @@ class Brackets extends React.Component {
               <ToastContainer autoClose={1500} />   
             </div>
             ); 
+        }
+        else {
+          return (
+            <div className="App">
+              <div style={{display: 'flex',  justifyContent:'center', alignItems:'center', height: '100vh'}}>
+                <ReactLoading type="bubbles" color="#6c757d"
+                  height={100} width={50} />
+              </div>
+              <ToastContainer autoClose={1500} />
+            </div>
+          )
+        }
+        
         };
 }
 
