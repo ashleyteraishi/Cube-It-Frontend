@@ -14,15 +14,15 @@ export default function ControlButtons(props) {
             Reset
         </div>
         <div className="btn btn-one"
-            onClick={props.handlePauseResume}>
-            {props.isPaused ? "Resume" : "Pause"}
+            onClick={props.handleStop}>
+            {props.isStopped ? "Resume" : "Stop"}
         </div>
         </div>
     );
 
     return (
         <div className="Control-Buttons">
-        <div>{props.active ? ActiveButtons : StartButton}</div>
+            <div>{props.active ? ActiveButtons : StartButton}</div>
         </div>
     );
 }
