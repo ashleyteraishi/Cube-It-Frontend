@@ -8,6 +8,7 @@ import Radio from '@mui/material/Radio';
 import Cookies from 'js-cookie';
 import { SERVER_URL } from '../constants.js';
 import ReactLoading from 'react-loading';
+import jwt_decode from 'jwt-decode';
 
 // NOTE:  for OAuth security, http request must have
 //   credentials: 'include' 
@@ -18,11 +19,27 @@ class Subtournaments extends React.Component {
     super(props);
     console.log(props);
     console.log("=Subtournaments.cnstr " + JSON.stringify(props.location));
-    this.state = { selected: 0, subtournaments: [], subtournamentSelected: {}, isLoading: true };
+    this.state = { selected: 0, subtournaments: [], subtournamentSelected: {}, isLoading: true, user: {}};
   }
 
   componentDidMount() {
     this.fetchSubtournaments();
+    if(localStorage.getItem('jwt') === null) {
+      function setStateUser(state, props) {
+        const newState = { ...state, user: {email: "", name: ""}};
+        return newState;
+      }
+      this.setState(setStateUser);
+    }
+    else {
+      const storedJwt = localStorage.getItem('jwt');
+      console.log("account jwt:", jwt_decode(storedJwt));
+      function setStateUser(state, props) {
+        const newState = { ...state, user: jwt_decode(storedJwt)};
+        return newState;
+      }
+      this.setState(setStateUser);
+    }
   }
 
   fetchSubtournaments = () => {
@@ -81,11 +98,13 @@ class Subtournaments extends React.Component {
 
     fetch(`${SERVER_URL}subtournaments/${this.state.subtournamentSelected.subtournamentId}/register`,
       {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-XSRF-TOKEN': token
+          'X-XSRF-TOKEN': token,
+          'Access-Control-Allow-Origin': '*'
         },
-        credentials: 'include',
+        body: JSON.stringify({email: this.state.user.email, name: this.state.user.name}),
       })
       .then(res => {
         if (res.ok) {
