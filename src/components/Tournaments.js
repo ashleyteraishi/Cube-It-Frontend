@@ -94,7 +94,7 @@ class Tournaments extends React.Component {
   addTournament = (tournament) => {
     const token = Cookies.get('XSRF-TOKEN');
 
-    fetch(`${SERVER_URL}assignment`,
+    fetch(`${SERVER_URL}newTournamentAdd`,
       {
         method: 'POST',
         headers: {
@@ -175,9 +175,7 @@ class Tournaments extends React.Component {
             variant="outlined" color="primary" disabled={this.state.tournaments.length === 0} style={{ margin: 10 }}>
             View Subtournaments
           </Button>
-          <Button id="AddTournament">
-            <AddTournament addTournament={this.addTournament} />
-          </Button>
+          <AddTournament addTournament={this.addTournament} />
 
           <ToastContainer autoClose={1500} />
         </div>
@@ -191,9 +189,7 @@ class Tournaments extends React.Component {
 
           <div style={{ height: 400, width: '100%' }}>
             <h1>No Upcoming Tournaments</h1>
-            <Button id="AddTournament">
-              <AddTournament addTournament={this.addTournament} />
-            </Button>
+            <AddTournament addTournament={this.addTournament} />
           </div>
 
           <ToastContainer autoClose={1500} />

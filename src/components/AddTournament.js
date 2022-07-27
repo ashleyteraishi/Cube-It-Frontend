@@ -26,11 +26,11 @@ class AddTournament extends React.Component {
         this.setState({ [event.target.name]: event.target.value });
     };
 
-    handeAdd = () => {
+    handleAdd = () => {
         const tournament = {
             tournamentName: this.state.tournamentName,
             startDate: this.state.startDate,
-            endDate: this.date.endDate
+            endDate: this.state.endDate
         };
         this.props.addTournament(tournament);
         this.handleClose();
