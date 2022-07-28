@@ -8,10 +8,10 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 
 
-class AddTournament extends React.Component {
+class AddSubtournament extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { open: false, tournament: [] };
+        this.state = { open: false, subtournament: [] };
     };
 
     handleClickOpen = () => {
@@ -27,12 +27,10 @@ class AddTournament extends React.Component {
     };
 
     handleAdd = () => {
-        const tournament = {
-            tournamentName: this.state.tournamentName,
-            startDate: this.state.startDate,
-            endDate: this.state.endDate
+        const subtournament = {
+            subtournamentType: this.state.subtournamentType,
         };
-        this.props.addTournament(tournament);
+        this.props.addSubtournament(subtournament);
         this.handleClose();
     }
 
@@ -40,14 +38,12 @@ class AddTournament extends React.Component {
         return (
             <div>
                 <Button variant="outlined" color="primary" style={{ margin: 10 }} onClick={this.handleClickOpen}>
-                    Add Tournament
+                    Add Subtournament
                 </Button>
                 <Dialog open={this.state.open} onClose={this.handleClose}>
-                    <DialogTitle>Add Tournament</DialogTitle>
+                    <DialogTitle>Add Subtournament</DialogTitle>
                     <DialogContent style={{ paddingTop: 20 }} >
-                        <TextField autoFocus fullWidth label="Tournament Name" name="tournamentName" onChange={this.handleChange} style={{ marginTop: 20 }} />
-                        <TextField fullWidth label="Start Date" name="startDate" onChange={this.handleChange} style={{ marginTop: 20 }} />
-                        <TextField fullWidth label="End Date" name="endDate" onChange={this.handleChange} style={{ marginTop: 20 }} />
+                        <TextField autoFocus fullWidth label="Subtournament Type" name="subtournamentType" onChange={this.handleChange} style={{ marginTop: 20 }} />
                     </DialogContent>
                     <DialogActions>
                         <Button color="secondary" onClick={this.handleClose}>Cancel</Button>
@@ -59,4 +55,4 @@ class AddTournament extends React.Component {
     }
 }
 
-export default AddTournament;
+export default AddSubtournament;

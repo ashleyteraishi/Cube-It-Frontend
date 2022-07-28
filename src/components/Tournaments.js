@@ -189,11 +189,7 @@ class Tournaments extends React.Component {
     if (!this.state.isLoading && this.state.tournaments.length !== 0) {
       return (
         <div className="App">
-
-          <div style={{ width: '100%' }}>
-            For DEBUG:  display state.
-            {JSON.stringify(this.state)}
-          </div>
+          <h1>Tournaments</h1>
           <div style={{ height: 400, width: '100%' }}>
             <DataGrid rows={this.state.tournaments} columns={columns} />
           </div>
@@ -201,7 +197,7 @@ class Tournaments extends React.Component {
             variant="outlined" color="primary" disabled={this.state.tournaments.length === 0} style={{ margin: 10 }}>
             View Subtournaments
           </Button>
-          {this.state.user && this.state.user.type && this.state.user === "judge" &&
+          {this.state.user && this.state.user.type && this.state.user.type === "judge" &&
             <AddTournament addTournament={this.addTournament} />
           }
 
@@ -214,10 +210,10 @@ class Tournaments extends React.Component {
     else if (!this.state.isLoading) {
       return (
         <div className="App">
-
+          <h1>Tournaments</h1>
           <div style={{ height: 400, width: '100%' }}>
             <h1>No Upcoming Tournaments</h1>
-            {this.state.user && this.state.user.type && this.state.user === "judge" &&
+            {this.state.user && this.state.user.type && this.state.user.type === "judge" &&
               <AddTournament addTournament={this.addTournament} />
             }
           </div>

@@ -72,11 +72,7 @@ class Brackets extends React.Component {
         if (!this.state.isLoading) {
           return(
             <div className="App">
-              
-              <div style={{width:'100%'}}>
-                For DEBUG:  display state.
-                {JSON.stringify(this.state)}
-              </div>
+              <h1>Brackets</h1>
               <div style={{ height: 400, width: '100%' }}>
                 <DataGrid rows={this.state.brackets} columns={columns} />
               </div>

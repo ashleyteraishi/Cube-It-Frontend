@@ -9,6 +9,7 @@ import Cookies from 'js-cookie';
 import { SERVER_URL } from '../constants.js';
 import ReactLoading from 'react-loading';
 import jwt_decode from 'jwt-decode';
+import AddSubtournament from './AddSubtournament.js';
 
 // NOTE:  for OAuth security, http request must have
 //   credentials: 'include' 
@@ -18,18 +19,20 @@ class Subtournaments extends React.Component {
   constructor(props) {
     super(props);
     console.log(props);
+    console.log(props.match.params.tournamentId)
     console.log("=Subtournaments.cnstr " + JSON.stringify(props.location));
-    this.state = { selected: 0, subtournaments: [], subtournamentSelected: {}, isLoading: true, user: {}, isJudge: false};
+    this.state = { selected: 0, subtournaments: [], subtournamentSelected: {}, isLoading: true, user: {} };
   }
 
   componentDidMount() {
     this.fetchSubtournaments();
+    this.getUser();
   }
 
   getUser = () => {
-    if(localStorage.getItem('jwt') === null) {
+    if (localStorage.getItem('jwt') === null) {
       function setStateUser(state, props) {
-        const newState = { ...state, user: {email: "", name: ""}};
+        const newState = { ...state, user: {} };
         return newState;
       }
       this.setState(setStateUser);
@@ -38,20 +41,21 @@ class Subtournaments extends React.Component {
       const storedJwt = localStorage.getItem('jwt');
       console.log("account jwt:", jwt_decode(storedJwt));
       function setStateUser(state, props) {
-        const newState = { ...state, user: jwt_decode(storedJwt)};
+        const newState = { ...state, user: jwt_decode(storedJwt) };
+        this.fetchUser(newState);
         return newState;
       }
       this.setState(setStateUser);
     }
   }
 
-  fetchUser = () => {
+  fetchUser = (passedState) => {
     console.log("Subtournament.fetchUser");
     const token = Cookies.get('XSRF-TOKEN');
-    fetch(`${SERVER_URL}user`,
+    fetch(`${SERVER_URL}user?email=${passedState.user.email}`,
       {
         method: 'GET',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'X-XSRF-TOKEN': token,
           'Access-Control-Allow-Origin': '*'
@@ -60,11 +64,11 @@ class Subtournaments extends React.Component {
       .then((response) => response.json())
       .then((responseData) => {
         if (responseData) {
-          function setStateJudge(state, props) {
-            const newState = { ...state, isJudge: true };
+          function setStateUser(state, props) {
+            const newState = { ...state, user: responseData };
             return newState;
           }
-          this.setState(setStateJudge);
+          this.setState(setStateUser);
 
           function setLoading(state, props) {
             const newState = { ...state, isLoading: false };
@@ -76,9 +80,6 @@ class Subtournaments extends React.Component {
         }
       })
       .catch(err => {
-        toast.error("Fetch user failed.", {
-          position: toast.POSITION.BOTTOM_LEFT
-        });
         console.error(err);
       })
   }
@@ -89,7 +90,7 @@ class Subtournaments extends React.Component {
     fetch(`${SERVER_URL}tournaments/${this.props.match.params.tournamentId}/subtournaments`,
       {
         method: 'GET',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'X-XSRF-TOKEN': token,
           'Access-Control-Allow-Origin': '*'
@@ -145,7 +146,7 @@ class Subtournaments extends React.Component {
           'X-XSRF-TOKEN': token,
           'Access-Control-Allow-Origin': '*'
         },
-        body: JSON.stringify({email: this.state.user.email, name: this.state.user.name}),
+        body: JSON.stringify({ email: this.state.user.email, name: this.state.user.name }),
       })
       .then(res => {
         if (res.ok) {
@@ -162,6 +163,36 @@ class Subtournaments extends React.Component {
       })
       .catch(err => {
         toast.error("Error when signing up", {
+          position: toast.POSITION.BOTTOM_LEFT
+        });
+        console.error(err);
+      })
+  }
+
+  addSubtournament = (subtournament) => {
+    console.log("add subtournament - subtournament:", subtournament)
+    console.log("add subtournament - subtournament type:", subtournament.subtournamentType)
+    const token = Cookies.get('XSRF-TOKEN');
+    fetch(`${SERVER_URL}newSubtournamentAdd`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-XSRF-TOKEN': token,
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify({subtournamentType: subtournament.subtournamentType, tournamentId: this.props.match.params.tournamentId}),
+      })
+      .then(res => {
+        if (res.ok) {
+          toast.success("Tournament successfully added", {
+            position: toast.POSITION.BOTTOM_LEFT
+          });
+          this.fetchSubtournaments();
+        }
+      })
+      .catch(err => {
+        toast.error("Error when adding", {
           position: toast.POSITION.BOTTOM_LEFT
         });
         console.error(err);
@@ -204,11 +235,7 @@ class Subtournaments extends React.Component {
     if (!this.state.isLoading && this.state.subtournaments.length !== 0) {
       return (
         <div className="App">
-
-          <div style={{ width: '100%' }}>
-            For DEBUG:  display state.
-            {JSON.stringify(this.state)}
-          </div>
+          <h1>Subtournaments</h1>
           <div style={{ height: 400, width: '100%' }}>
             <DataGrid rows={this.state.subtournaments} columns={columns} />
           </div>
@@ -220,6 +247,9 @@ class Subtournaments extends React.Component {
             variant="outlined" color="primary" >
             Sign Up
           </Button>
+          {this.state.user && this.state.user.type && this.state.user.type === "judge" &&
+            <AddSubtournament addSubtournament={this.addSubtournament} />
+          }
           <ToastContainer autoClose={1500} />
         </div>
       )
@@ -229,9 +259,12 @@ class Subtournaments extends React.Component {
     else if (!this.state.isLoading) {
       return (
         <div className="App">
+          <h1>Subtournaments</h1>
           <div style={{ height: 400, width: '100%' }}>
             <h1>No Subtournaments for Selected Tournament</h1>
-            <h2>Check Back Soon!</h2>
+            {this.state.user && this.state.user.type && this.state.user.type === "judge" &&
+              <AddSubtournament addSubtournament={this.addSubtournament} />
+            }
           </div>
           <ToastContainer autoClose={1500} />
         </div>
@@ -241,7 +274,7 @@ class Subtournaments extends React.Component {
     else {
       return (
         <div className="App">
-          <div style={{display: 'flex',  justifyContent:'center', alignItems:'center', height: '100vh'}}>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
             <ReactLoading type="bubbles" color="#6c757d"
               height={100} width={50} />
           </div>
