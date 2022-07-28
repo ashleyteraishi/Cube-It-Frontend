@@ -19,11 +19,14 @@ class Subtournaments extends React.Component {
     super(props);
     console.log(props);
     console.log("=Subtournaments.cnstr " + JSON.stringify(props.location));
-    this.state = { selected: 0, subtournaments: [], subtournamentSelected: {}, isLoading: true, user: {}};
+    this.state = { selected: 0, subtournaments: [], subtournamentSelected: {}, isLoading: true, user: {}, isJudge: false};
   }
 
   componentDidMount() {
     this.fetchSubtournaments();
+  }
+
+  getUser = () => {
     if(localStorage.getItem('jwt') === null) {
       function setStateUser(state, props) {
         const newState = { ...state, user: {email: "", name: ""}};
@@ -40,6 +43,44 @@ class Subtournaments extends React.Component {
       }
       this.setState(setStateUser);
     }
+  }
+
+  fetchUser = () => {
+    console.log("Subtournament.fetchUser");
+    const token = Cookies.get('XSRF-TOKEN');
+    fetch(`${SERVER_URL}user`,
+      {
+        method: 'GET',
+        headers: { 
+          'Content-Type': 'application/json',
+          'X-XSRF-TOKEN': token,
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+      .then((response) => response.json())
+      .then((responseData) => {
+        if (responseData) {
+          function setStateJudge(state, props) {
+            const newState = { ...state, isJudge: true };
+            return newState;
+          }
+          this.setState(setStateJudge);
+
+          function setLoading(state, props) {
+            const newState = { ...state, isLoading: false };
+            return newState;
+          }
+          this.setState(setLoading);
+          console.log(this.state.isLoading);
+
+        }
+      })
+      .catch(err => {
+        toast.error("Fetch user failed.", {
+          position: toast.POSITION.BOTTOM_LEFT
+        });
+        console.error(err);
+      })
   }
 
   fetchSubtournaments = () => {

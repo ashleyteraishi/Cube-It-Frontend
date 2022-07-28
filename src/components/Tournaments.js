@@ -40,10 +40,36 @@ class Tournaments extends React.Component {
       console.log("account jwt:", jwt_decode(storedJwt));
       function setStateUser(state, props) {
         const newState = { ...state, user: jwt_decode(storedJwt) };
+        this.fetchUser(newState);
         return newState;
       }
       this.setState(setStateUser);
     }
+  }
+
+  fetchUser = (passedState) => {
+    console.log("tournament - fetch user");
+    const token = Cookies.get('XSRF-TOKEN');
+    fetch(`${SERVER_URL}user?email=${passedState.user.email}`,
+      {
+        method: 'GET',
+        headers: { 'X-XSRF-TOKEN': token },
+      })
+      .then((response) => response.json())
+      .then((responseData) => {
+        if (responseData) {
+          // add attribute "id" to each row. Required for DataGrid,  id is index of row (i.e. 0, 1, 2, ...)  
+          function setStateUser(state, props) {
+            const newState = { ...state, user: responseData };
+            return newState;
+          }
+          this.setState(setStateUser);
+          console.log("new state - user,", this.state.user);
+        }
+      })
+      .catch(err => {
+        console.error(err);
+      });
   }
 
   fetchTournaments = () => {
@@ -175,7 +201,9 @@ class Tournaments extends React.Component {
             variant="outlined" color="primary" disabled={this.state.tournaments.length === 0} style={{ margin: 10 }}>
             View Subtournaments
           </Button>
-          <AddTournament addTournament={this.addTournament} />
+          {this.state.user && this.state.user.type && this.state.user === "judge" &&
+            <AddTournament addTournament={this.addTournament} />
+          }
 
           <ToastContainer autoClose={1500} />
         </div>
@@ -189,7 +217,9 @@ class Tournaments extends React.Component {
 
           <div style={{ height: 400, width: '100%' }}>
             <h1>No Upcoming Tournaments</h1>
-            <AddTournament addTournament={this.addTournament} />
+            {this.state.user && this.state.user.type && this.state.user === "judge" &&
+              <AddTournament addTournament={this.addTournament} />
+            }
           </div>
 
           <ToastContainer autoClose={1500} />
