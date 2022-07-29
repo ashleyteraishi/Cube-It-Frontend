@@ -13,7 +13,7 @@ import Radio from '@mui/material/Radio';
 class Account extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { selected: 1, user: {}, lifetimeAverages: [], cubetypes: [], userRecords: [] };
+        this.state = { selected: 1, selectedUserRecord: {}, user: {}, cubetypes: [], userRecords: [] };
     };
 
     componentDidMount() {
@@ -23,7 +23,15 @@ class Account extends React.Component {
 
     onRadioClick = (event) => {
         console.log("Account.onRadioClick " + event.target.value);
-        this.setState({ selected: event.target.value });
+
+        function setStateSelectedRecord(state, props) {
+            const newState = { ...state, selectedUserRecord: state.userRecords[event.target.value - 1] };
+            return newState;
+          }
+          this.setState(setStateSelectedRecord);
+          console.log("onRadioClick selectedUserRecord", this.state.selectedUserRecord);
+
+        this.setState({ selected: event.target.value});
     }
 
     getUser() {
@@ -98,6 +106,13 @@ class Account extends React.Component {
                             return newState;
                         }
                         this.setState(setStateUserRecords);
+                        function setStateSelectedRecord(state, props) {
+                            const newState = { ...state, selectedUserRecord: state.userRecords[0] };
+                            return newState;
+                        }
+                        this.setState(setStateSelectedRecord);
+                        console.log("onRadioClick selectedUserRecord", this.state.selectedUserRecord);
+                
                     })
 
                 } else {
@@ -164,12 +179,12 @@ class Account extends React.Component {
                                 <DataGrid getRowId={(row) => row.id} rows={this.state.userRecords} columns={columns} />
                             </div>
                         }
-
-
-                        <Button id="StarterTournament" component={Link} to={{ pathname: `/competition` }}
-                            variant="outlined" color="primary" style={{ margin: 10 }}>
-                            Get Lifetime Average
-                        </Button>
+                        {this.state.selectedUserRecord.average === 'No Average Yet' &&
+                            <Button id="StarterTournament" component={Link} to={{ pathname: `/starter-competition/${this.state.selectedUserRecord.cubetype}` }}
+                                variant="outlined" color="primary" style={{ margin: 10 }}>
+                                Get Lifetime Average
+                            </Button>
+                        }
 
                     </div>
                 </div>

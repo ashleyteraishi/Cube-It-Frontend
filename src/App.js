@@ -10,7 +10,7 @@ import NavBar from './components/NavBar';
 import Account from './components/Account';
 import AddTournament from './components/AddTournament';
 import { useEffect } from 'react';
-import Competition from './components/Competition'
+import StarterCompetition from './components/StarterCompetition'
 
 function App() {
 
@@ -22,7 +22,7 @@ function App() {
 
           <Route path='/tournaments/:tournamentId/subtournaments' component={withRouter(Subtournaments)} />
           <Route path='/subtournaments/:subtournamentId/brackets' component={Brackets} />
-          <Route path='/competition' component={Competition} />
+          <Route path='/starter-competition/:cubetype' component={StarterCompetition} />
           <Route path='/tournaments' component={withRouter(Tournaments)} />
           <Route path='/account' component={Account} />
           <Route exact path='/' component={Home} />

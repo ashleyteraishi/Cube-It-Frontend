@@ -107,17 +107,10 @@ class Tournaments extends React.Component {
       { field: 'endDate', headerName: 'End Date', valueFormatter: dateFormatter, width: 250 },
     ];
 	
-	
-    // if the fetch call returns tournaments
-	//<div style={{ width: '100%' }}>
-            //For DEBUG:  display state.
-            //{JSON.stringify(this.state)}
-     //    </div>
     if (!this.state.isLoading && this.state.tournaments.length !== 0) {
       return (
         <div className="App">
-		
-         
+          <h1>Tournaments</h1>
           <div style={{ height: 400, width: '100%' }}>
             <DataGrid rows={this.state.tournaments} columns={columns} />
           </div>
