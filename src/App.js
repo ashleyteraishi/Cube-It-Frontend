@@ -1,24 +1,33 @@
 import './App.css';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import {BrowserRouter, Routes, Route} from 'react-router-dom';
-import TournamentList from './components/TournamentList';
+import { BrowserRouter, Switch, Route, withRouter } from 'react-router-dom';
+import Tournaments from './components/Tournaments';
+import Subtournaments from './components/Subtournaments';
+import Brackets from './components/Brackets';
+import Login from './components/Login';
+//import UserRecord from './components/UserRecords';
+import Home from './components/Home';
+import NavBar from './components/NavBar';
+import Account from './components/Account';
+import AddTournament from './components/AddTournament';
+import { useEffect } from 'react';
+import Competition from './components/Competition'
 
 function App() {
+
   return (
-    <div className="App">
-      <AppBar position="static" color="default">
-        <Toolbar>
-           <Typography variant="h6" color="inherit">
-            CubeIt
-           </Typography>
-        </Toolbar>
-      </AppBar>
+    <div className='App'>
       <BrowserRouter>
-        <Routes>
-          <Route exact path='/tournaments' element={<TournamentList/>}/>
-        </Routes>
+        <NavBar />
+        <Switch>
+
+          <Route path='/tournaments/:tournamentId/subtournaments' component={withRouter(Subtournaments)} />
+          <Route path='/subtournaments/:subtournamentId/brackets' component={Brackets} />
+          <Route path='/competition' component={Competition} />
+          <Route path='/tournaments' component={withRouter(Tournaments)} />
+          <Route path='/account' component={Account} />
+          <Route exact path='/' component={Home} />
+
+        </Switch>
       </BrowserRouter>
     </div>
   );
