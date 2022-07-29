@@ -208,6 +208,8 @@ class Subtournaments extends React.Component {
     }
     this.setState(setStateSubtournament);
     console.log(this.state.subtournamentSelected);
+
+    this.setState({ selected: event.target.value });
   }
 
   render() {
@@ -219,7 +221,7 @@ class Subtournaments extends React.Component {
         renderCell: (params) => (
           <div>
             <Radio
-              checked={params.row.id === this.state.selected}
+              checked={params.row.id == this.state.selected}
               onChange={this.onRadioClick}
               value={params.row.id}
               color="default"

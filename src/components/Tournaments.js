@@ -27,6 +27,11 @@ class Tournaments extends React.Component {
     this.getUser();
   }
 
+  onRadioClick = (event) => {
+    console.log("Tournament.onRadioClick " + event.target.value);
+    this.setState({ selected: event.target.value });
+  }
+
   getUser = () => {
     if (localStorage.getItem('jwt') === null) {
       function setStateUser(state, props) {
@@ -171,7 +176,7 @@ class Tournaments extends React.Component {
         renderCell: (params) => (
           <div>
             <Radio
-              checked={params.row.id === this.state.selected}
+              checked={params.row.id == this.state.selected}
               onChange={this.onRadioClick}
               value={params.row.id}
               color="default"

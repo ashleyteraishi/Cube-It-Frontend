@@ -7,16 +7,23 @@ import { DataGrid } from '@mui/x-data-grid';
 import 'react-toastify/dist/ReactToastify.css';
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom'
+import { ListItemSecondaryAction } from '@mui/material';
+import Radio from '@mui/material/Radio';
 
 class Account extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { user: {}, lifetimeAverages: [], cubetypes: [], userRecords: []};
+        this.state = { selected: 1, user: {}, lifetimeAverages: [], cubetypes: [], userRecords: [] };
     };
 
     componentDidMount() {
-        this.getUser();
         this.fetchCubeTypes();
+        this.getUser();
+    }
+
+    onRadioClick = (event) => {
+        console.log("Account.onRadioClick " + event.target.value);
+        this.setState({ selected: event.target.value });
     }
 
     getUser() {
@@ -49,9 +56,13 @@ class Account extends React.Component {
             })
             .then((response) => response.json())
             .then((responseData) => {
-                if (Array.isArray(responseData.CUBETYPES)) {
-                    //  add to each cubetype an "id"  This is required by DataGrid  "id" is the row index in the data grid table 
-                    this.setState({ cubetypes: responseData.CUBETYPES.map((cubetype, index) => ({ id: index, ...cubetype})) });
+                if (Array.isArray(responseData)) {
+                    function setStateCubeTypes(state, props) {
+                        const newState = { ...state, cubetypes: responseData };
+                        this.mapCubeTypes(newState);
+                        return newState;
+                    }
+                    this.setState(setStateCubeTypes);
                 }
             })
             .catch(err => console.error(err));
@@ -69,7 +80,26 @@ class Account extends React.Component {
             .then((responseData) => {
                 if (Array.isArray(responseData.userRecords)) {
                     //  add to each record an "id"  This is required by DataGrid  "id" is the row index in the data grid table 
-                    this.setState({ lifetimeAverages: responseData.userRecords.map((record, index) => ({ id: index, ...record })) });
+                    console.log("responseData.userRecords: ", responseData.userRecords)
+                    responseData.userRecords.map(obj => {
+                        let index = this.state.userRecords.findIndex(o => o.cubetype === obj.cubeType);
+                        console.log("found index:", index)
+                        function setStateUserRecords(state, props) {
+                            const newState = {
+                                ...state, userRecords: [
+                                    ...state.userRecords.slice(0, index),
+                                    {
+                                        ...state.userRecords[index],
+                                        average: obj.average,
+                                    },
+                                    ...state.userRecords.slice(index + 1)
+                                ]
+                            };
+                            return newState;
+                        }
+                        this.setState(setStateUserRecords);
+                    })
+
                 } else {
                     console.log("else block");
                     function setStateLifetimeAverages(state, props) {
@@ -82,23 +112,39 @@ class Account extends React.Component {
             .catch(err => console.error(err));
     }
 
-    mapCubeToAverage() {
-        const result = [];
-        console.log("cubetypes: " ,this.state.cubetypes);
-        this.state.cubetypes.forEach(cubetype => {
-            result.push({type: cubetype, average: "No Lifetime Average"})
+    mapCubeTypes(newState) {
+        const result = []
+        let idCounter = 0;
+
+        newState.cubetypes.forEach(type => {
+            idCounter += 1
+            result.push({ id: idCounter, cubetype: type, average: "No Average Yet" })
         })
+
+        function setStateUserRecords(state, props) {
+            const newState = { ...state, userRecords: result };
+            return newState;
+        }
+        this.setState(setStateUserRecords);
+
         console.log(result)
     }
 
     render() {
         const columns = [
             {
-                field: 'cubeType',
+                field: 'cubetype',
                 headerName: 'Cube Type',
                 width: 400,
                 renderCell: (params) => (
                     <div>
+                        <Radio
+                            checked={params.row.id == this.state.selected}
+                            onChange={this.onRadioClick}
+                            value={params.row.id}
+                            color="default"
+                            size="small"
+                        />
                         {params.value}
                     </div>
                 )
@@ -113,18 +159,18 @@ class Account extends React.Component {
                     <h2>{this.state.user.name}</h2>
                     <div>
                         <h2>Lifetime Averages</h2>
-                        {this.state.lifetimeAverages !== [] &&
+                        {this.state.userRecords !== [] &&
                             <div style={{ height: 450, width: '100%', align: "left" }}>
-                                <DataGrid rows={this.state.lifetimeAverages} columns={columns} />
+                                <DataGrid getRowId={(row) => row.id} rows={this.state.userRecords} columns={columns} />
                             </div>
                         }
 
-                        {this.state.lifetimeAverages.length < 12 &&
-                                <Button id="StarterTournament" component={Link} to={{ pathname: `/competition` }}
-                                    variant="outlined" color="primary" style={{ margin: 10 }}>
-                                    Get Lifetime Average
-                                </Button>
-                        }
+
+                        <Button id="StarterTournament" component={Link} to={{ pathname: `/competition` }}
+                            variant="outlined" color="primary" style={{ margin: 10 }}>
+                            Get Lifetime Average
+                        </Button>
+
                     </div>
                 </div>
             );

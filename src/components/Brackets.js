@@ -16,13 +16,18 @@ class Brackets extends React.Component {
       super(props);
       console.log(props);
       console.log("=Brackets.cnstr "+ JSON.stringify(props.location));
-      this.state = {brackets :  [], isLoading: true};
+      this.state = {selected: 0, brackets :  [], isLoading: true};
     }
 
     componentDidMount() {
       const subtournamentId = this.props.match.params.subtournamentId;
       this.fetchBrackets(subtournamentId);
     }
+
+    onRadioClick = (event) => {
+      console.log("Brackets.onRadioClick " + event.target.value);
+      this.setState({ selected: event.target.value });
+  }
  
     fetchBrackets = (subtournamentId) => {
       console.log("Brackets.fetchBrackets");
