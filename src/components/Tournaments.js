@@ -24,6 +24,7 @@ class Tournaments extends React.Component {
     this.fetchTournaments();
   }
 
+	
   fetchTournaments = () => {
     console.log("Tournaments.fetchTournaments");
     const token = Cookies.get('XSRF-TOKEN');
@@ -81,7 +82,10 @@ class Tournaments extends React.Component {
   }
 
   render() {
-    const columns = [
+    const dateFormatter = (params) => {
+	  return params.value.substring(5,7)+"/"+params.value.substring(8,10)+"/"+params.value.substring(0,4);
+	};
+	const columns = [
       {
         field: 'tournamentName',
         headerName: 'Name',
@@ -99,19 +103,21 @@ class Tournaments extends React.Component {
           </div>
         )
       },
-      { field: 'startDate', headerName: 'Start Date', width: 250 },
-      { field: 'endDate', headerName: 'End Date', width: 250 },
+      { field: 'startDate', headerName: 'Start Date', valueFormatter: dateFormatter, width: 250 },
+      { field: 'endDate', headerName: 'End Date', valueFormatter: dateFormatter, width: 250 },
     ];
-
+	
+	
     // if the fetch call returns tournaments
+	//<div style={{ width: '100%' }}>
+            //For DEBUG:  display state.
+            //{JSON.stringify(this.state)}
+     //    </div>
     if (!this.state.isLoading && this.state.tournaments.length !== 0) {
       return (
         <div className="App">
-
-          <div style={{ width: '100%' }}>
-            For DEBUG:  display state.
-            {JSON.stringify(this.state)}
-          </div>
+		
+         
           <div style={{ height: 400, width: '100%' }}>
             <DataGrid rows={this.state.tournaments} columns={columns} />
           </div>
