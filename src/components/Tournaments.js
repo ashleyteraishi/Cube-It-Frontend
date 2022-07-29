@@ -194,7 +194,6 @@ class Tournaments extends React.Component {
     if (!this.state.isLoading && this.state.tournaments.length !== 0) {
       return (
         <div className="App">
-          <h1>Tournaments</h1>
           <div style={{ height: 400, width: '100%' }}>
             <DataGrid rows={this.state.tournaments} columns={columns} />
           </div>
