@@ -21,30 +21,27 @@ class Competition extends React.Component {
         console.log(props);
         console.log("props.bracketid", props.match.params.bracketid)
         console.log("=Subtournaments.cnstr " + JSON.stringify(props.location));
-        this.state = { user: {}, entryTimes: [], bracketAverage: null };
+        this.state = { user: {}, entryTimes: [], bracketAverage: null, lifetimeAverage: null};
     }
 
     componentDidMount() {
         this.getUser();
-        this.fetchTimes();
         if (this.state.entryTimes.length >= 5) {
             this.fetchBracketAverage();
         }
     }
 
     componentDidUpdate() {
-        if (this.state.entryTimes.length < 5) {
-            this.fetchTimes();
-        }
-        else {
+        this.fetchTimes(this.state);
+        if (this.state.entryTimes.length >=5 ) {
             this.fetchBracketAverage();
         }
     }
 
-    fetchTimes = () => {
+    fetchTimes = (passedState) => {
         console.log("Subtournament.fetchTimes");
         const token = Cookies.get('XSRF-TOKEN');
-        fetch(`${SERVER_URL}competition/times?bracketid=${this.props.match.params.bracketid}&email=${this.state.user.email}`,
+        fetch(`${SERVER_URL}entry-times?bracketid=${this.props.match.params.bracketid}&email=${passedState.user.email}`,
             {
                 method: 'GET',
                 headers: {
@@ -84,11 +81,41 @@ class Competition extends React.Component {
                     this.setState({ bracketAverage: responseData });
                     function setStateBracketAverage(state, props) {
                         const newState = { ...state, bracketAverage: responseData};
+                        this.fetchLifetimeAverage();
                         return newState;
                     }
                     this.setState(setStateBracketAverage);
                 } else {
                     toast.error("Bracket average fetch failed.", {
+                        position: toast.POSITION.BOTTOM_LEFT
+                    });
+                }
+            })
+            .catch(err => console.error(err));
+    }
+
+    fetchLifetimeAverage = () => {
+        console.log("Subtournament.fetchLifetimeAverage");
+        const token = Cookies.get('XSRF-TOKEN');
+        fetch(`${SERVER_URL}updateAverage?email=${this.state.user.email}&bracketid=${this.props.match.params.bracketid}`,
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-XSRF-TOKEN': token,
+                    'Access-Control-Allow-Origin': '*'
+                }
+            })
+            .then((response) => response.json())
+            .then((responseData) => {
+                if (responseData) {
+                    function setStateLifetimeAverage(state, props) {
+                        const newState = { ...state, lifetimeAverage: responseData};
+                        return newState;
+                    }
+                    this.setState(setStateLifetimeAverage);
+                } else {
+                    toast.error("Lifetime average fetch failed.", {
                         position: toast.POSITION.BOTTOM_LEFT
                     });
                 }
@@ -109,48 +136,12 @@ class Competition extends React.Component {
             console.log("account jwt:", jwt_decode(storedJwt));
             function setStateUser(state, props) {
                 const newState = { ...state, user: jwt_decode(storedJwt) };
+                this.fetchTimes(newState);
                 return newState;
             }
             this.setState(setStateUser);
         }
     }
-
-    /*
-    handleChange(event) {
-        console.log("handle change time:", event.target.value)
-        function setStateTime(state, props) {
-            const newState = { ...state, time: event.target.value };
-            return newState;
-        }
-        this.setState(setStateTime);
-    }
-
-    addTime = () => {
-        const token = Cookies.get('XSRF-TOKEN');
-
-        fetch(`${SERVER_URL}competition?bracketid=${this.props.match.params.bracketid}&email=${this.state.user.email}&time=${parseFloat(this.state.time)}`,
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-XSRF-TOKEN': token,
-                    'Access-Control-Allow-Origin': '*'
-                },
-            })
-            .then((response) => response.json())
-            .then((responseData) => {
-                if (Array.isArray(responseData.entryTimes)) {
-                    //  add to each entryTime an "id"  This is required by DataGrid  "id" is the row index in the data grid table 
-                    this.setState({ entryTimes: responseData.entryTimes.map((entryTime, index) => ({ id: index, ...entryTime })) });
-                } else {
-                    toast.error("Post failed.", {
-                        position: toast.POSITION.BOTTOM_LEFT
-                    });
-                }
-            })
-            .catch(err => { console.error(err); })
-    }
-    */
 
     render() {
         console.log("bracket average:", this.state.bracketAverage)
@@ -176,10 +167,12 @@ class Competition extends React.Component {
                     <h2>{this.props.match.params.bracketid}</h2>
                 </div>
                 <div>
-                    {this.state.entryTimes.length >= 5 && this.state.bracketAverage &&
+                    {this.state.entryTimes.length >= 5 && this.state.bracketAverage && this.state.lifetimeAverage &&
                         <div>
                             <h3>Bracket Average:</h3>
                             <h2>{this.state.bracketAverage}</h2>
+                            <h3>New Lifetime Average:</h3>
+                            <h2>{this.state.lifetimeAverage}</h2>
                         </div>
                     }
                     {this.state.entryTimes.length < 5 &&

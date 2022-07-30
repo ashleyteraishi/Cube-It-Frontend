@@ -47,7 +47,7 @@ function StopWatch(props) {
 
     const addUserTime = (time) => {
         const token = Cookies.get('XSRF-TOKEN');
-        fetch(`${SERVER_URL}competition?bracketid=${props.bracketid}&email=${user.email}&time=${time}`,
+        fetch(`${SERVER_URL}new-entry-time?bracketid=${props.bracketid}&email=${user.email}&time=${time}`,
             {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json',

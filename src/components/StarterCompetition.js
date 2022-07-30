@@ -9,6 +9,7 @@ import Cookies from 'js-cookie';
 import { SERVER_URL } from '../constants.js';
 import ReactLoading from 'react-loading';
 import jwt_decode from 'jwt-decode';
+import StopWatch from './StopWatch.js';
 
 // NOTE:  for OAuth security, http request must have
 //   credentials: 'include' 
@@ -20,15 +21,31 @@ class StarterCompetition extends React.Component {
         console.log(props);
         console.log("props.cubetype", props.match.params.cubetype)
         console.log("=Subtournaments.cnstr " + JSON.stringify(props.location));
-        this.state = { user: {}, time: null, entryTimes: [], average: null};
+        this.state = { user: {}, time: null, entryTimes: [], average: null, bracketid: null};
 
         this.handleChange = this.handleChange.bind(this);
-        //this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     componentDidMount() {
+        this.getBracketId();
         this.getUser();
-        this.fetchTimes();
+    }
+
+    componentDidUpdate() {
+        this.fetchTimes(this.state);
+        if (this.state.entryTimes.length >=20) {
+            this.fetchAverage();
+        }
+    }
+
+    getBracketId = () => {
+        function setStateBracketId(state, props) {
+            const cubetypes = ["2x2", "3x3", "4x4", "5x5", "6x6", "7x7", "3x3blnf", "pyram", "megam", "skewb", "sqone", "clock"]; 
+            const id = cubetypes.findIndex(type => type === props.match.params.cubetype) + 1;
+            const newState = { ...state, bracketid: id };
+            return newState;
+        }
+        this.setState(setStateBracketId);
     }
 
     getUser = () => {
@@ -45,6 +62,7 @@ class StarterCompetition extends React.Component {
             function setStateUser(state, props) {
                 const newState = { ...state, user: jwt_decode(storedJwt) };
                 this.fetchUser(newState);
+                this.fetchTimes(newState);
                 return newState;
             }
             this.setState(setStateUser);
@@ -68,7 +86,6 @@ class StarterCompetition extends React.Component {
                     toast.success("Time successfully added", {
                         position: toast.POSITION.BOTTOM_LEFT
                     });
-                    this.fetchTimes();
                 } else {
                     toast.error("Error when adding", {
                         position: toast.POSITION.BOTTOM_LEFT
@@ -90,39 +107,11 @@ class StarterCompetition extends React.Component {
         this.setState(setStateTime);
     }
 
-    addTime = () => {
+    fetchTimes = (passedState) => {
         const token = Cookies.get('XSRF-TOKEN');
+        console.log("start competition fetchTimes");
 
-        fetch(`${SERVER_URL}starter-competition?cubetype=${this.props.match.params.cubetype}&email=${this.state.user.email}&time=${parseFloat(this.state.time)}`,
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-XSRF-TOKEN': token,
-                    'Access-Control-Allow-Origin': '*'
-                },
-            })
-            .then((response) => response.json())
-            .then((responseData) => {
-                if (Array.isArray(responseData.entryTimes)) {
-                    //  add to each entryTime an "id"  This is required by DataGrid  "id" is the row index in the data grid table 
-                    this.setState({ entryTimes: responseData.entryTimes.map((entryTime, index) => ({ id: index, ...entryTime })) });
-                    if (this.state.entryTimes.length >= 20) {
-                        this.fetchAverage();
-                    }
-                } else {
-                    toast.error("Post failed.", {
-                        position: toast.POSITION.BOTTOM_LEFT
-                    });
-                }
-            })
-            .catch(err => { console.error(err); })
-    }
-
-    fetchTimes = () => {
-        const token = Cookies.get('XSRF-TOKEN');
-
-        fetch(`${SERVER_URL}entry-times?cubetype=${this.props.match.params.cubetype}&email=${this.state.user.email}`,
+        fetch(`${SERVER_URL}entry-times?bracketid=${passedState.bracketid}&email=${passedState.user.email}`,
             {
                 method: 'GET',
                 headers: {
@@ -201,15 +190,7 @@ class StarterCompetition extends React.Component {
                 {this.state.entryTimes.length < 20 &&
                     <div>
                         <h3>Input Time (Temporary)</h3>
-                        <label>
-                            Time:
-                            <input type="number" step="0.01" id="inputTime" value={this.state.value} onChange={this.handleChange} />
-                        </label>
-                        <Button id="AddTime" onClick={this.addTime}
-                            variant="outlined" color="primary" >
-                            Submit
-                        </Button>
-
+                        <StopWatch bracketid={this.state.bracketid} />
                     </div>
                 }
                 {this.state.entryTimes.length >= 20 &&
