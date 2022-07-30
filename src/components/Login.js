@@ -34,14 +34,14 @@ const Login = () => {
         const requestOptions = {
             method: 'POST',
             headers: {
-                'Content-Type':'application/json',
+                'Content-Type': 'application/json',
                 'X-XSRF-TOKEN': token
             },
-            body: JSON.stringify({email: user.email, name: user.name})
+            body: JSON.stringify({ email: user.email, name: user.name })
         };
 
-        console.log("request body: ",requestOptions.body);
-    
+        console.log("request body: ", requestOptions.body);
+
         console.log("post");
         fetch(`${SERVER_URL}user`, requestOptions)
             .then(response => response.json())
@@ -69,6 +69,11 @@ const Login = () => {
             {Object.keys(user).length !== 0 &&
                 <li>
                     <Link to="/account" className='link'>Account</Link>
+                </li>
+            }
+            {Object.keys(user).length !== 0 &&
+                <li>
+                    <Link to="/my-tournaments" className='link'>Enrolled</Link>
                 </li>
             }
             <li id='login'>

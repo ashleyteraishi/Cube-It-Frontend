@@ -9,7 +9,6 @@ import Cookies from 'js-cookie';
 import { SERVER_URL } from '../constants.js';
 import ReactLoading from 'react-loading';
 import jwt_decode from 'jwt-decode';
-import AddSubtournament from './AddSubtournament.js';
 
 // NOTE:  for OAuth security, http request must have
 //   credentials: 'include' 
@@ -202,7 +201,6 @@ class StarterCompetition extends React.Component {
                 {this.state.entryTimes.length < 20 &&
                     <div>
                         <h3>Input Time (Temporary)</h3>
-
                         <label>
                             Time:
                             <input type="number" step="0.01" id="inputTime" value={this.state.value} onChange={this.handleChange} />
