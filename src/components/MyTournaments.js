@@ -171,7 +171,7 @@ class MyTournaments extends React.Component {
                     <h1>My Tournaments</h1>
                     <div style={{ height: 400, width: '100%' }}>
                         <DataGrid rows={this.state.brackets} columns={columns} />
-                        <Button id="competition" component={Link} to={{ pathname: `/competition/${this.state.bracketSelected.id}` }}
+                        <Button id="competition" component={Link} to={{ pathname: `/competition/${this.state.bracketSelected.bracket_id}` }}
                             variant="outlined" color="primary" style={{ margin: 10 }}>
                             Go To Competition
                         </Button>

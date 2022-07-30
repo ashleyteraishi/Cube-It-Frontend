@@ -9,6 +9,7 @@ import Cookies from 'js-cookie';
 import { SERVER_URL } from '../constants.js';
 import ReactLoading from 'react-loading';
 import jwt_decode from 'jwt-decode';
+import StopWatch from './StopWatch.js';
 
 // NOTE:  for OAuth security, http request must have
 //   credentials: 'include' 
@@ -20,13 +21,79 @@ class Competition extends React.Component {
         console.log(props);
         console.log("props.bracketid", props.match.params.bracketid)
         console.log("=Subtournaments.cnstr " + JSON.stringify(props.location));
-        this.state = { user: {}, time: null, entryTimes: [], average: null };
-
-        this.handleChange = this.handleChange.bind(this);
+        this.state = { user: {}, entryTimes: [], bracketAverage: null };
     }
 
     componentDidMount() {
         this.getUser();
+        this.fetchTimes();
+        if (this.state.entryTimes.length >= 5) {
+            this.fetchBracketAverage();
+        }
+    }
+
+    componentDidUpdate() {
+        if (this.state.entryTimes.length < 5) {
+            this.fetchTimes();
+        }
+        else {
+            this.fetchBracketAverage();
+        }
+    }
+
+    fetchTimes = () => {
+        console.log("Subtournament.fetchTimes");
+        const token = Cookies.get('XSRF-TOKEN');
+        fetch(`${SERVER_URL}competition/times?bracketid=${this.props.match.params.bracketid}&email=${this.state.user.email}`,
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-XSRF-TOKEN': token,
+                    'Access-Control-Allow-Origin': '*'
+                }
+            })
+            .then((response) => response.json())
+            .then((responseData) => {
+                if (Array.isArray(responseData.entryTimes)) {
+                    //  add to each entryTimes an "id"  This is required by DataGrid  "id" is the row index in the data grid table 
+                    this.setState({ entryTimes: responseData.entryTimes.map((entryTime, index) => ({ id: index, ...entryTime })) });
+                } else {
+                    console.log("no times yet");
+                }
+            })
+            .catch(err => console.error(err));
+
+    }
+
+    fetchBracketAverage = () => {
+        console.log("Subtournament.fetchBracketAverage");
+        const token = Cookies.get('XSRF-TOKEN');
+        fetch(`${SERVER_URL}competition/bracket-average/?bracketid=${this.props.match.params.bracketid}&email=${this.state.user.email}`,
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-XSRF-TOKEN': token,
+                    'Access-Control-Allow-Origin': '*'
+                }
+            })
+            .then((response) => response.json())
+            .then((responseData) => {
+                if (responseData) {
+                    this.setState({ bracketAverage: responseData });
+                    function setStateBracketAverage(state, props) {
+                        const newState = { ...state, bracketAverage: responseData};
+                        return newState;
+                    }
+                    this.setState(setStateBracketAverage);
+                } else {
+                    toast.error("Bracket average fetch failed.", {
+                        position: toast.POSITION.BOTTOM_LEFT
+                    });
+                }
+            })
+            .catch(err => console.error(err));
     }
 
     getUser = () => {
@@ -42,43 +109,13 @@ class Competition extends React.Component {
             console.log("account jwt:", jwt_decode(storedJwt));
             function setStateUser(state, props) {
                 const newState = { ...state, user: jwt_decode(storedJwt) };
-                this.fetchUser(newState);
                 return newState;
             }
             this.setState(setStateUser);
         }
     }
 
-    fetchUser = (passedState) => {
-        console.log("Subtournament.fetchUser");
-        const token = Cookies.get('XSRF-TOKEN');
-        fetch(`${SERVER_URL}user?email=${passedState.user.email}`,
-            {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-XSRF-TOKEN': token,
-                    'Access-Control-Allow-Origin': '*'
-                }
-            })
-            .then(res => {
-                if (res.ok) {
-                    toast.success("Time successfully added", {
-                        position: toast.POSITION.BOTTOM_LEFT
-                    });
-                    this.fetchTimes();
-                } else {
-                    toast.error("Error when adding", {
-                        position: toast.POSITION.BOTTOM_LEFT
-                    });
-                    console.error('Post http status =' + res.status);
-                }
-            })
-            .catch(err => {
-                console.error(err);
-            })
-    }
-
+    /*
     handleChange(event) {
         console.log("handle change time:", event.target.value)
         function setStateTime(state, props) {
@@ -113,8 +150,24 @@ class Competition extends React.Component {
             })
             .catch(err => { console.error(err); })
     }
+    */
 
     render() {
+        console.log("bracket average:", this.state.bracketAverage)
+
+        const columns = [
+            {
+                field: 'time',
+                headerName: 'Time',
+                width: 400,
+                renderCell: (params) => (
+                    <div>
+                        {params.value}
+                    </div>
+                )
+            },
+        ];
+
         return (
             <div className='App'>
                 <div>
@@ -123,16 +176,26 @@ class Competition extends React.Component {
                     <h2>{this.props.match.params.bracketid}</h2>
                 </div>
                 <div>
-                    <h3>Input Time (Temporary)</h3>
-                    <label>
-                        Time:
-                        <input type="number" step="0.01" id="inputTime" value={this.state.value} onChange={this.handleChange} />
-                    </label>
-                    <Button id="AddTime" onClick={this.addTime}
-                        variant="outlined" color="primary" >
-                        Submit
-                    </Button>
-
+                    {this.state.entryTimes.length >= 5 && this.state.bracketAverage &&
+                        <div>
+                            <h3>Bracket Average:</h3>
+                            <h2>{this.state.bracketAverage}</h2>
+                        </div>
+                    }
+                    {this.state.entryTimes.length < 5 &&
+                        <div>
+                            <h3>Input Time</h3>
+                            <StopWatch bracketid={this.props.match.params.bracketid} />
+                        </div>
+                    }
+                    {this.state.entryTimes !== [] &&
+                        <div>
+                            <h3>Submitted Times</h3>
+                            <div style={{ height: 400, width: '100%' }}>
+                                <DataGrid rows={this.state.entryTimes} columns={columns} />
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
         )
