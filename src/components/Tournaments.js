@@ -24,14 +24,14 @@ class Tournaments extends React.Component {
     this.fetchTournaments();
   }
 
-	
+
   fetchTournaments = () => {
     console.log("Tournaments.fetchTournaments");
     const token = Cookies.get('XSRF-TOKEN');
     fetch(`${SERVER_URL}tournaments`,
       {
         method: 'GET',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'X-XSRF-TOKEN': token,
           'Access-Control-Allow-Origin': '*'
@@ -71,7 +71,7 @@ class Tournaments extends React.Component {
   }
 
   onRadioClick = (event) => {
-    console.log("Tournament.onRadioClick " + event.target.value);
+    console.log("Subtournament.onRadioClick " + event.target.value);
     this.setState({ selected: event.target.value });
     function setStateTournament(state, props) {
       const newState = { ...state, tournamentSelected: state.tournaments[event.target.value] };
@@ -79,13 +79,15 @@ class Tournaments extends React.Component {
     }
     this.setState(setStateTournament);
     console.log(this.state.tournamentSelected);
+
+    this.setState({ selected: event.target.value });
   }
 
   render() {
     const dateFormatter = (params) => {
-	  return params.value.substring(5,7)+"/"+params.value.substring(8,10)+"/"+params.value.substring(0,4);
-	};
-	const columns = [
+      return params.value.substring(5, 7) + "/" + params.value.substring(8, 10) + "/" + params.value.substring(0, 4);
+    };
+    const columns = [
       {
         field: 'tournamentName',
         headerName: 'Name',
@@ -93,7 +95,7 @@ class Tournaments extends React.Component {
         renderCell: (params) => (
           <div>
             <Radio
-              checked={params.row.id === this.state.selected}
+              checked={params.row.id == this.state.selected}
               onChange={this.onRadioClick}
               value={params.row.id}
               color="default"
@@ -106,13 +108,16 @@ class Tournaments extends React.Component {
       { field: 'startDate', headerName: 'Start Date', valueFormatter: dateFormatter, width: 250 },
       { field: 'endDate', headerName: 'End Date', valueFormatter: dateFormatter, width: 250 },
     ];
-	
+
+    const tournaments = this.state.tournaments.filter(tournament => tournament.tournamentId !== 1111113)
+    console.log("filtered tournaments:", tournaments)
+
     if (!this.state.isLoading && this.state.tournaments.length !== 0) {
       return (
         <div className="App">
           <h1>Tournaments</h1>
           <div style={{ height: 400, width: '100%' }}>
-            <DataGrid rows={this.state.tournaments} columns={columns} />
+            <DataGrid rows={tournaments} columns={columns} />
           </div>
           <Button id="Subtournaments" component={Link} to={{ pathname: `/tournaments/${this.state.tournamentSelected.tournamentId}/subtournaments` }}
             variant="outlined" color="primary" disabled={this.state.tournaments.length === 0} style={{ margin: 10 }}>

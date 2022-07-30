@@ -69,8 +69,8 @@ class Brackets extends React.Component {
     render() {
        const columns = [
           { field: 'bracket_pos', headerName: 'Bracket Position', width: 400 },
-          { field: 'competitoronetimeid', headerName: 'Competitor One', width: 400 },
-          { field: 'competitortwotimeid', headerName: 'Competitor Two', width: 400 },
+          { field: 'competitoroneid', headerName: 'Competitor One', width: 400 },
+          { field: 'competitortwoid', headerName: 'Competitor Two', width: 400 },
           { field: 'subtournamentid', headerName: 'Subtournament Id', width: 400 },
         ];
         
