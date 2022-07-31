@@ -177,7 +177,7 @@ class Competition extends React.Component {
                     }
                     {this.state.entryTimes.length < 5 &&
                         <div>
-                            <h3>Input Time</h3>
+                            <p>Submit 5 times to complete this round.</p>
                             <StopWatch bracketid={this.props.match.params.bracketid} />
                         </div>
                     }

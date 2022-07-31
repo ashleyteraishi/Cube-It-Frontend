@@ -4,6 +4,7 @@ import { SERVER_URL } from '../constants.js';
 import ControlButtons from "./ControlButtons";
 import Cookies from 'js-cookie';
 import jwt_decode from "jwt-decode";
+import "./StopWatch.css";
 
 function StopWatch(props) {
     const [user, setUser] = useState({});
@@ -66,21 +67,6 @@ function StopWatch(props) {
                 console.log("CAUGHT!")
         })
     }
-
-
-    // fetchUserTime = (id) => {
-    //     const token = Cookies.get('XSRF-TOKEN');
-    //     fetch(`${SERVER_URL}/users/${id}`,
-    //         {
-    //             method: 'GET',
-    //             headers: { 'X-XSRF-TOKEN': token },
-    //             credentials: 'include'
-    //         } )
-    //     .then((response) => response.json())
-    //     .then((responseData) => {
-
-    //     })
-    // }
 
     const handleReset = () => {
         setIsActive(false);
