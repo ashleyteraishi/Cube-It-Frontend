@@ -21,9 +21,7 @@ class StarterCompetition extends React.Component {
         console.log(props);
         console.log("props.cubetype", props.match.params.cubetype)
         console.log("=Subtournaments.cnstr " + JSON.stringify(props.location));
-        this.state = { user: {}, time: null, entryTimes: [], average: null, bracketid: null};
-
-        this.handleChange = this.handleChange.bind(this);
+        this.state = { user: {}, entryTimes: [], average: null, bracketid: null};
     }
 
     componentDidMount() {
@@ -31,11 +29,20 @@ class StarterCompetition extends React.Component {
         this.getUser();
     }
 
-    componentDidUpdate() {
-        this.fetchTimes(this.state);
-        if (this.state.entryTimes.length >=20) {
-            this.fetchAverage();
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.entryTimes !== this.state.entryTimes) {
+            this.fetchTimes(this.state);
+            if (this.state.entryTimes.length >=20) {
+                this.fetchAverage();
+            }
         }
+    }
+
+    handleClick = () => {
+        this.fetchTimes(this.state);
+            if (this.state.entryTimes.length >=20) {
+                this.fetchAverage();
+            }
     }
 
     getBracketId = () => {
@@ -96,15 +103,6 @@ class StarterCompetition extends React.Component {
             .catch(err => {
                 console.error(err);
             })
-    }
-
-    handleChange(event) {
-        console.log("handle change time:", event.target.value)
-        function setStateTime(state, props) {
-            const newState = { ...state, time: event.target.value };
-            return newState;
-        }
-        this.setState(setStateTime);
     }
 
     fetchTimes = (passedState) => {
@@ -189,7 +187,7 @@ class StarterCompetition extends React.Component {
                 </div>
                 {this.state.entryTimes.length < 20 &&
                     <div>
-                        <h3>Input Time (Temporary)</h3>
+                        <h3>Input Time</h3>
                         <StopWatch bracketid={this.state.bracketid} />
                     </div>
                 }
