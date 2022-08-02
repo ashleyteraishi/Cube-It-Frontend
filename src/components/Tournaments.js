@@ -8,22 +8,76 @@ import { Radio } from '@mui/material';
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom'
 import ReactLoading from 'react-loading';
-
-// NOTE:  for OAuth security, http request must have
-//   credentials: 'include' 
+import AddTournament from './AddTournament';
+import jwt_decode from 'jwt-decode';
 
 
 class Tournaments extends React.Component {
   constructor(props) {
     super(props);
     console.log("=Tournaments.cnstr " + JSON.stringify(props.location));
-    this.state = { selected: 0, tournaments: [], tournamentSelected: {}, isLoading: true };
+    this.state = { selected: 0, tournaments: [], tournamentSelected: {}, isLoading: true, user: {}};
   }
 
   componentDidMount() {
     this.fetchTournaments();
+    this.getUser();
   }
 
+  getUser = () => {
+    if (localStorage.getItem('jwt') === null) {
+      function setStateUser(state, props) {
+        const newState = { ...state, user: {} };
+        return newState;
+      }
+      this.setState(setStateUser);
+    }
+    else {
+      const storedJwt = localStorage.getItem('jwt');
+      console.log("account jwt:", jwt_decode(storedJwt));
+      function setStateUser(state, props) {
+        const newState = { ...state, user: jwt_decode(storedJwt) };
+        this.fetchUser(newState);
+        return newState;
+      }
+      this.setState(setStateUser);
+    }
+  }
+
+  fetchUser = (passedState) => {
+    console.log("Subtournament.fetchUser");
+    const token = Cookies.get('XSRF-TOKEN');
+    fetch(`${SERVER_URL}user?email=${passedState.user.email}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-XSRF-TOKEN': token,
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+      .then((response) => response.json())
+      .then((responseData) => {
+        if (responseData) {
+          function setStateUser(state, props) {
+            const newState = { ...state, user: responseData };
+            return newState;
+          }
+          this.setState(setStateUser);
+
+          function setLoading(state, props) {
+            const newState = { ...state, isLoading: false };
+            return newState;
+          }
+          this.setState(setLoading);
+          console.log(this.state.isLoading);
+
+        }
+      })
+      .catch(err => {
+        console.error(err);
+      })
+  }
 
   fetchTournaments = () => {
     console.log("Tournaments.fetchTournaments");
@@ -68,6 +122,35 @@ class Tournaments extends React.Component {
         }
       })
       .catch(err => console.error(err));
+  }
+
+  addTournament = (tournament) => {
+    console.log("add tournament - tournament:", tournament)
+    const token = Cookies.get('XSRF-TOKEN');
+    fetch(`${SERVER_URL}newTournamentAdd`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-XSRF-TOKEN': token,
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify({tournamentName: tournament.tournamentName, startDate: tournament.startDate, endDate: tournament.endDate}),
+      })
+      .then(res => {
+        if (res.ok) {
+          toast.success("Tournament successfully added", {
+            position: toast.POSITION.BOTTOM_LEFT
+          });
+          this.fetchTournaments();
+        }
+      })
+      .catch(err => {
+        toast.error("Error when adding", {
+          position: toast.POSITION.BOTTOM_LEFT
+        });
+        console.error(err);
+      })
   }
 
   onRadioClick = (event) => {
@@ -123,6 +206,9 @@ class Tournaments extends React.Component {
             variant="outlined" color="primary" disabled={this.state.tournaments.length === 0} style={{ margin: 10 }}>
             View Subtournaments
           </Button>
+          {this.state.user && this.state.user.type && this.state.user.type === "judge" &&
+            <AddTournament addTournament={this.addTournament} />
+          }
 
           <ToastContainer autoClose={1500} />
         </div>
@@ -136,7 +222,9 @@ class Tournaments extends React.Component {
 
           <div style={{ height: 400, width: '100%' }}>
             <h1>No Upcoming Tournaments</h1>
-            <h2>Check Back Soon!</h2>
+            {this.state.user && this.state.user.type && this.state.user.type === "judge" &&
+              <AddTournament addTournament={this.addTournament} />
+            }
           </div>
 
           <ToastContainer autoClose={1500} />
